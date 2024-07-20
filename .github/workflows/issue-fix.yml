@@ -1,58 +1,37 @@
-name: Auto Suggest PR on Issue
+name: Create Pull Request
 
 on:
-  issues:
-    types: [opened]
+  push:
+    branches:
+      - main
 
 jobs:
-  suggest-fix:
+  create-pull-request:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Create helloworld.txt
-        run: echo "hello world from issue ${{ github.event.issue.number }}" > helloworld.txt
+      - name: Make changes
+        run: |
+          echo "hello world from issue 5" > helloworld.txt
 
-      - name: Show file content for debugging
-        run: cat helloworld.txt
-
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b "issue-${{ github.event.issue.number }}-fix"
+          git checkout -b issue-5-fix
           git add helloworld.txt
-          git commit -m "Suggested fix for issue #${{ github.event.issue.number }}"
-          git push origin "issue-${{ github.event.issue.number }}-fix"
-
-      - name: List files for debugging
-        run: ls -al
-
-      - name: Show git status for debugging
-        run: git status
-
-      - name: Show git log for debugging
-        run: git log --oneline --graph
-
-      - name: Check branch existence
-        run: |
-          git fetch origin
-          git branch -r
+          git commit -m "Suggested fix for issue #5"
+          git push origin issue-5-fix
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Suggested fix for issue #${{ github.event.issue.number }}"
-          branch: "issue-${{ github.event.issue.number }}-fix"
-          base: "main" # Ensure this is your default branch
-          title: "Suggested fix for issue #${{ github.event.issue.number }}"
-          body: "This PR suggests a fix for issue #${{ github.event.issue.number }} by adding a helloworld.txt file."
-          labels: "bugfix, automated"
-          draft: false # Ensure it's not a draft PR
-
-      - name: Debug create-pull-request action output
-        if: failure()
-        run: echo "Create Pull Request action failed"
+          commit-message: "Suggested fix for issue #5"
+          branch: issue-5-fix
+          base: main
+          title: "Suggested fix for issue #5"
+          body: "This PR suggests a fix for issue #5 by adding a helloworld.txt file."
+          labels: bugfix, automated
