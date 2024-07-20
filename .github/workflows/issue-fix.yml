@@ -33,6 +33,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Switch to main branch
+        run: git checkout main
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
