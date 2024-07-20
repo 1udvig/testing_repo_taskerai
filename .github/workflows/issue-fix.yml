@@ -24,6 +24,9 @@ jobs:
           git commit -m "Suggested fix for issue #${{ github.event.issue.number }}"
           git push origin "issue-${{ github.event.issue.number }}-fix"
 
+      - name: List files for debugging
+        run: ls -al
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -33,3 +36,4 @@ jobs:
           base: "main" # Ensure this is your default branch
           title: "Suggested fix for issue #${{ github.event.issue.number }}"
           body: "This PR suggests a fix for issue #${{ github.event.issue.number }} by adding a helloworld.txt file."
+          labels: "bugfix, automated"
