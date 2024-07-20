@@ -34,7 +34,7 @@ jobs:
       - name: Fetch latest changes from remote
         run: git fetch origin
 
-      - name: Merge remote changes into local branch
+      - name: Ensure branch is up-to-date with remote
         run: |
           git pull origin add-helloworld-file --allow-unrelated-histories || true
 
@@ -43,6 +43,13 @@ jobs:
           git push --force-with-lease --set-upstream origin add-helloworld-file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check git status
+        run: |
+          echo "Checking the status of the repository"
+          git status
+          echo "Differences between main and add-helloworld-file"
+          git diff main..add-helloworld-file
 
       - name: Create Pull Request
         id: create_pr
