@@ -17,11 +17,13 @@ jobs:
         with:
           node-version: "14"
 
-      - name: Create a new branch
+      - name: Configure git
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git checkout -b add-helloworld-file
+
+      - name: Create a new branch
+        run: git checkout -b add-helloworld-file
 
       - name: Create helloworld.txt
         run: echo 'Hello, World!' > helloworld.txt
@@ -31,28 +33,12 @@ jobs:
           git add helloworld.txt
           git commit -m 'Add helloworld.txt'
 
-      - name: Fetch latest changes from remote
-        run: git fetch origin
-
-      - name: Ensure branch is up-to-date with remote
-        run: |
-          git pull origin add-helloworld-file --allow-unrelated-histories || true
-
       - name: Push changes
-        run: |
-          git push --force-with-lease --set-upstream origin add-helloworld-file
+        run: git push --force --set-upstream origin add-helloworld-file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check git status
-        run: |
-          echo "Checking the status of the repository"
-          git status
-          echo "Differences between main and add-helloworld-file"
-          git diff main..add-helloworld-file
-
       - name: Create Pull Request
-        id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
