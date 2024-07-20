@@ -33,15 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Switch to main branch
-        run: git checkout main
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Add helloworld.txt"
-          base: main
-          branch: add-helloworld-file
-          title: "Add helloworld.txt"
-          body: "This PR adds a helloworld.txt file."
+      - name: create pull request
+        run: gh pr create -B main -H add-helloworld-file --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
