@@ -42,6 +42,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Add helloworld.txt"
+          base: main
           branch: add-helloworld-file
           title: "Add helloworld.txt"
           body: "This PR adds a helloworld.txt file."
