@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Create helloworld.txt
-        run: echo "hello world" > helloworld.txt
+        run: echo "hello world from issue ${{ github.event.issue.number }}" > helloworld.txt
 
       - name: Show file content for debugging
         run: cat helloworld.txt
@@ -30,8 +30,16 @@ jobs:
       - name: List files for debugging
         run: ls -al
 
+      - name: Show git status for debugging
+        run: git status
+
       - name: Show git log for debugging
         run: git log --oneline --graph
+
+      - name: Check branch existence
+        run: |
+          git fetch origin
+          git branch -r
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
@@ -43,3 +51,8 @@ jobs:
           title: "Suggested fix for issue #${{ github.event.issue.number }}"
           body: "This PR suggests a fix for issue #${{ github.event.issue.number }} by adding a helloworld.txt file."
           labels: "bugfix, automated"
+          draft: false # Ensure it's not a draft PR
+
+      - name: Debug create-pull-request action output
+        if: failure()
+        run: echo "Create Pull Request action failed"
