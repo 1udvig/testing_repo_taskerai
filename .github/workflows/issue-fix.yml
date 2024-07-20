@@ -15,6 +15,9 @@ jobs:
       - name: Create helloworld.txt
         run: echo "hello world" > helloworld.txt
 
+      - name: Show file content for debugging
+        run: cat helloworld.txt
+
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
@@ -26,6 +29,9 @@ jobs:
 
       - name: List files for debugging
         run: ls -al
+
+      - name: Show git log for debugging
+        run: git log --oneline --graph
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
