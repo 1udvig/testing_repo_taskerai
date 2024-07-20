@@ -31,13 +31,21 @@ jobs:
           git add helloworld.txt
           git commit -m 'Add helloworld.txt'
 
+      - name: Fetch latest changes from remote
+        run: git fetch origin
+
+      - name: Merge remote changes into local branch
+        run: |
+          git pull origin add-helloworld-file --allow-unrelated-histories || true
+
       - name: Push changes
         run: |
-          git push --set-upstream origin add-helloworld-file
+          git push --force-with-lease --set-upstream origin add-helloworld-file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Pull Request
+        id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
