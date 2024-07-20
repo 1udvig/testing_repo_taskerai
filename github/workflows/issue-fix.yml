@@ -1,0 +1,33 @@
+name: Auto Suggest PR on Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  suggest-fix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create helloworld.txt
+        run: echo "hello world" > helloworld.txt
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "issue-${{ github.event.issue.number }}-fix"
+          git add helloworld.txt
+          git commit -m "Suggested fix for issue #${{ github.event.issue.number }}"
+          git push origin "issue-${{ github.event.issue.number }}-fix"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Suggested fix for issue #${{ github.event.issue.number }}"
+          branch: "issue-${{ github.event.issue.number }}-fix"
+          title: "Suggested fix for issue #${{ github.event.issue.number }}"
+          body: "This PR suggests a fix for issue #${{ github.event.issue.number }} by adding a helloworld.txt file."
