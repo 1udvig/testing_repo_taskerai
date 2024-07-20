@@ -12,11 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js (required for octokit)
-        uses: actions/setup-node@v3
-        with:
-          node-version: "14"
-
       - name: Configure git
         run: |
           git config --global user.name 'github-actions'
@@ -34,7 +29,7 @@ jobs:
           git commit -m 'Add helloworld.txt'
 
       - name: Push changes
-        run: git push --force --set-upstream origin add-helloworld-file
+        run: git push --set-upstream origin add-helloworld-file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
