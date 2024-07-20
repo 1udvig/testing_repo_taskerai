@@ -1,66 +1,47 @@
-name: Automatic PR for Issue
+name: Create PR on Issue Creation
 
 on:
   issues:
     types: [opened]
 
 jobs:
-  issue_branch:
+  create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Set up Node.js (required for octokit)
+        uses: actions/setup-node@v3
         with:
           node-version: "14"
 
-      - name: Install Octokit
-        run: npm install @octokit/rest
+      - name: Create a new branch
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git checkout -b add-helloworld-file
 
-      - name: Run Script
+      - name: Create helloworld.txt
+        run: echo 'Hello, World!' > helloworld.txt
+
+      - name: Commit changes
+        run: |
+          git add helloworld.txt
+          git commit -m 'Add helloworld.txt'
+
+      - name: Push changes
+        run: |
+          git push --set-upstream origin add-helloworld-file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          node <<EOF
-          const { Octokit } = require("@octokit/rest");
-          const exec = require("child_process").execSync;
 
-          const octokit = new Octokit({
-            auth: process.env.GITHUB_TOKEN
-          });
-
-          async function run() {
-            const context = require(process.env.GITHUB_EVENT_PATH);
-            const issueNumber = context.issue.number;
-            const owner = context.repository.owner.login;
-            const repo = context.repository.name;
-
-            const branchName = `issue-${issueNumber}-branch`;
-
-            // Clone the repo and create a new branch
-            exec(`git clone https://github.com/${owner}/${repo}.git`);
-            process.chdir(repo);
-            exec(`git checkout -b ${branchName}`);
-
-            // Add the file and commit
-            exec(`echo "Hello World" > helloworld.txt`);
-            exec(`git add helloworld.txt`);
-            exec(`git commit -m "Add helloworld.txt"`);
-            exec(`git push origin ${branchName}`);
-
-            // Create a pull request
-            await octokit.pulls.create({
-              owner: owner,
-              repo: repo,
-              title: `Pull request for issue #${issueNumber}`,
-              head: branchName,
-              base: 'main',
-              body: 'This is an automated pull request to resolve issue #'+ issueNumber
-            });
-          }
-
-          run();
-          EOF
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add helloworld.txt"
+          branch: add-helloworld-file
+          title: "Add helloworld.txt"
+          body: "This PR adds a helloworld.txt file."
