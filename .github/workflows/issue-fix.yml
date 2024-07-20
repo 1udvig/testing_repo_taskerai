@@ -33,12 +33,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v5
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     commit-message: "Add helloworld.txt"
-      #     base: main
-      #     branch: add-helloworld-file
-      #     title: "Add helloworld.txt"
-      #     body: "This PR adds a helloworld.txt file."
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add helloworld.txt"
+          base: main
+          branch: add-helloworld-file
+          title: "Add helloworld.txt"
+          body: "This PR adds a helloworld.txt file."
